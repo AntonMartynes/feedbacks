@@ -33,6 +33,11 @@ export const Main = () => {
   const [description, setDescription] = React.useState();
   const [rating, setRating] = React.useState();
 
+  //TG
+  const TOKEN = '6382996342:AAHlLZcmRjeeDYW3dM0qaukrEx9CQFNsSeI'
+  const CHAT_ID = '-1002113289047'
+  const URI_API = `https://api.telegram.org/bot${ TOKEN }/sendMessage`
+
   const [feedbacks, setFeedbacks] = React.useState([
     { name: 'qwe', reasone: 'w', description: 'ddd', rating: 2 },
   ]);
@@ -58,7 +63,17 @@ export const Main = () => {
   };
 
   const handleSubmit = () => {
-    const data = { name, reasone, description, rating };
+    const data = { name, reasone, description, rating }; 
+    let message = `<b>Ви отримали новий відгук</b>\n`
+    message += `<b>Автор: ${name}</b>\n`  
+    message += `<b>Тема відгуку: ${reasone}</b>\n`  
+    message += `<b>Відгук: ${description}</b>\n`  
+    message += `<b>Оцінка: ${rating}</b>\n`  
+      axios.post(URI_API, {
+        chat_id: CHAT_ID,
+        parse_mode: 'html',
+        text: message
+      })
     sendFeedback(data);
     handleClose()
     console.log(data);
