@@ -21,6 +21,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
 
 const defaultTheme = createTheme();
 
@@ -58,7 +59,8 @@ export const Main = () => {
 
   const handleSubmit = () => {
     const data = { name, reasone, description, rating };
-
+    sendFeedback(data);
+    handleClose()
     console.log(data);
   };
 
@@ -74,6 +76,29 @@ export const Main = () => {
       color: '#ff3d47',
     },
   });
+  const getFeedbacks = () => {
+    axios.get('https://feedbacks-829cf132703f.herokuapp.com')
+    .then(response => {
+      setFeedbacks(response.data)
+      console.log('Response data:', response.data);
+      // Обработка полученных данных
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // Обработка ошибки
+    });
+  }
+
+  const sendFeedback = (data) => {
+    axios.post('https://feedbacks-829cf132703f.herokuapp.com', data)
+      .then(response => {
+        console.log('Response data:', response.data);
+        getFeedbacks()
+      })
+  }
+  React.useEffect(() => {
+    getFeedbacks()
+  }, [])
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -224,7 +249,7 @@ export const Main = () => {
             </DialogContentText>
             {feedbacks.map((feedback) => {
               return (
-                <Card sx={{ minWidth: 275, mt: 1 }} key={feedback.name}>
+                <Card sx={{ minWidth: 275, mt: 1 }} key={feedback.id}>
                   <CardContent>
                     <Typography sx={{ fontSize: 18 }} gutterBottom>
                       {`Тема відгуку: ${feedback.reasone}`}
